@@ -1,74 +1,1026 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DBSAFER POC SOP</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBSAFER POC SOP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'PingFang TC', 'Heiti TC', 'Microsoft JhengHei', sans-serif;
+        }
+        /* Ensure text wrapping for titles and descriptions */
+        .text-wrap {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        /* Custom styles for the new flowchart cards (from user's new HTML) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body background is handled by Tailwind in the main body tag */
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header is handled by Tailwind in the main header tag */
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* POC 流程綱要部分 */
+        .process-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .process-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #374151;
+            text-align: center;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .step-1 { background: linear-gradient(135deg, #3B82F6, #1E40AF); }
+        .step-2 { background: linear-gradient(135deg, #3B82F6, #1E40AF); }
+        .step-3 { background: linear-gradient(135deg, #3B82F6, #1E40AF); }
+        .step-4 { background: linear-gradient(135deg, #EF4444, #DC2626); }
+
+        .step-content {
+            flex: 1;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 0.9rem;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        .time-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #EF4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .time-badge.blue {
+            background: #3B82F6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .time-badge.green {
+            background: #10B981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .flow-arrow {
+            text-align: center;
+            margin: 15px 0;
+            color: #10B981;
+            font-size: 1.5rem;
+        }
+
+        /* 時程預估部分 */
+        .schedule-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .schedule-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #374151;
+            text-align: center;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(248, 250, 252, 0.6);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(241, 245, 249, 0.8);
+            transform: translateX(5px);
+        }
+
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .timeline-setup { background: linear-gradient(135deg, #FFD93D, #FFC107); }
+        .timeline-testing { background: linear-gradient(135deg, #36D399, #10B981); }
+        .timeline-report { background: linear-gradient(135deg, #FF6B6B, #EF4444); }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .timeline-duration {
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .timeline-weeks {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4B5563;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+
+        /* 甘特圖部分 */
+        .gantt-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            grid-column: 1 / -1; /* Span across both columns in the main-layout grid */
+        }
+
+        .gantt-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #374151;
+            text-align: center;
+        }
+
+        .gantt-chart {
+            position: relative;
+            overflow-x: auto;
+            min-height: 300px;
+        }
+
+        .time-header {
+            display: flex;
+            margin-bottom: 20px;
+            padding-left: 250px; /* Aligns with task labels */
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 15px;
+        }
+
+        .week-label {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            color: #4B5563;
+            padding: 10px;
+            background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+            margin-right: 2px;
+            border-radius: 8px;
+            min-width: 80px; /* Ensure weeks are wide enough */
+        }
+
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .gantt-row:hover {
+            transform: translateX(5px);
+        }
+
+        .task-label {
+            width: 240px;
+            padding: 15px;
+            font-weight: 600;
+            color: #374151;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .task-timeline {
+            flex: 1;
+            display: flex;
+            position: relative;
+            height: 40px;
+        }
+
+        .timeline-slot {
+            flex: 1;
+            margin-right: 2px;
+            border-radius: 6px;
+            position: relative;
+            min-width: 78px; /* Approx width for each week slot */
+        }
+
+        .task-bar {
+            height: 100%;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .task-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .task-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+
+        .setup-bar {
+            background: linear-gradient(135deg, #FFD93D, #FFC107);
+        }
+
+        .testing-bar {
+            background: linear-gradient(135deg, #36D399, #10B981);
+        }
+
+        .report-bar {
+            background: linear-gradient(135deg, #FF6B6B, #EF4444);
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .gantt-chart {
+                min-width: 600px; /* Ensure horizontal scroll on smaller screens */
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .task-label {
+                width: 200px;
+                font-size: 0.9rem;
+            }
+            .time-header {
+                padding-left: 210px; /* Adjust for smaller task-label width */
+            }
+        }
+
+        /* Modal specific styles for download links (from original) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-left: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background-color: #06D6A0;
+            color: white;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+        .download-link:hover {
+            background-color: #05B28B;
+        }
+
+        /* New style for document download buttons */
+        .document-download-button {
+            display: inline-flex;
+            flex-direction: column; /* Stack icon and text */
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem; /* Small gap between icon and text */
+            padding: 0.75rem 1rem; /* Adjust padding */
+            background-color: #06D6A0; /* Green color from the current download-link */
+            color: white;
+            border-radius: 0.5rem; /* Rounded corners */
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            min-width: 90px; /* Ensure a minimum width */
+            text-align: center;
+        }
+
+        .document-download-button:hover {
+            background-color: #05B28B;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .document-download-button svg {
+            width: 28px; /* Larger icon size */
+            height: 28px;
+            stroke: white; /* Ensure icon color is white */
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="bg-blue-800 text-white p-6 rounded-lg shadow mb-10 text-center">
-      <h1 class="text-4xl font-bold">DBSAFER POC SOP</h1>
-      <p class="text-sm text-blue-200">資料庫安全概念驗證流程儀表板</p>
-    </header>
+<body class="bg-gray-50 text-gray-800">
 
-    <!-- 第一階段 -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-bold text-blue-600 mb-6">第一階段：探索與準備</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="text-lg font-semibold text-blue-800 mb-2">🤝 業務簡報</h3>
-          <p class="text-gray-700">介紹 DBSAFER 功能與模組架構</p>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="text-lg font-semibold text-blue-800 mb-2">🔍 架構訪談</h3>
-          <p class="text-gray-700">確認現有 PAM/DAM 系統與需求</p>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="text-lg font-semibold text-blue-800 mb-2">📋 文件準備</h3>
-          <p class="text-gray-700">協助填寫環境調查表與測試清單</p>
-        </div>
-      </div>
-    </section>
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-12 bg-[#073B4C] text-white p-6 rounded-lg shadow-xl border-b-4 border-[#118AB2]">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">DBSAFER POC SOP</h1>
+            <p class="text-lg text-gray-200">互動式流程儀表板 - 資料庫安全概念驗證標準作業程序</p>
+        </header>
 
-    <!-- 第二階段 -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-bold text-blue-600 mb-6">第二階段：建置與測試</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold text-blue-800 mb-2">VM 規格建議</h3>
-          <ul class="list-disc list-inside text-gray-700">
-            <li>CPU：4 核心</li>
-            <li>記憶體：8 GB</li>
-            <li>硬碟：100 GB</li>
-          </ul>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold text-blue-800 mb-2">安裝方式</h3>
-          <p class="text-gray-700">可選擇遠端設定或現場建置，依據資安需求安排</p>
-        </div>
-      </div>
-    </section>
+        <main class="space-y-16">
+            <section id="phase1" class="text-center">
+                <h2 class="text-3xl font-bold text-[#118AB2] mb-8">第一階段：探索與準備</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-xl transform hover:scale-105 transition-transform duration-300 flex flex-col items-center">
+                        <div class="text-5xl mb-4">🤝</div>
+                        <h3 class="text-xl font-semibold mb-2 text-[#073B4C]">業務洽談與簡報</h3>
+                        <p class="text-gray-600 mb-4">初步溝通，了解您的需求並介紹 DBSAFER 的強大整合功能。</p>
+                        <button id="openPresentationModal" class="mt-auto bg-[#118AB2] text-white px-6 py-2 rounded-lg hover:bg-[#073B4C] transition-colors duration-300 shadow-md">
+                            查看簡報清單
+                        </button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-xl transform hover:scale-105 transition-transform duration-300">
+                        <div class="text-5xl mb-4">🔍</div>
+                        <h3 class="text-xl font-semibold mb-2 text-[#073B4C]">需求與架構訪談</h3>
+                        <p class="text-gray-600">深入了解您現有的 PAM/DAM 系統與技術架構，確立 POC 目標。</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-xl transform hover:scale-105 transition-transform duration-300 flex flex-col items-center">
+                        <div class="text-5xl mb-4">📋</div>
+                        <h3 class="text-xl font-semibold mb-2 text-[#073B4C]">文件準備</h3>
+                        <p class="text-gray-600 mb-4">請您協助填寫環境調查表與功能需求清單，以利後續規劃。</p>
+                        <button id="openDetailsModal" class="mt-auto bg-[#118AB2] text-white px-6 py-2 rounded-lg hover:bg-[#073B4C] transition-colors duration-300 shadow-md">
+                            查看詳細清單
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-    <!-- 第三階段 -->
-    <section>
-      <h2 class="text-2xl font-bold text-blue-600 mb-6">第三階段：POC 時程與執行</h2>
-      <div class="bg-white p-6 rounded shadow">
-        <ol class="list-decimal list-inside text-gray-800 space-y-2">
-          <li>POC 啟動會議（明確目標與時程）</li>
-          <li>DBSAFER 安裝與設定（約 2 週）</li>
-          <li>POC 測試期（約 2～4 週）</li>
-          <li>結案報告提交（POC 結束後 2 週）</li>
-        </ol>
-        <p class="mt-4 text-green-600 font-semibold">總時程：6～8 週</p>
-      </div>
-    </section>
+            <section id="phase2">
+                <h2 class="text-3xl font-bold text-center text-[#118AB2] mb-8">第二階段：環境建置</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div class="bg-white p-6 rounded-xl shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-center text-[#073B4C]">客戶端虛擬機規格</h3>
+                        <p class="text-center text-gray-600 mb-6">為確保 POC 順利進行，請準備符合以下規格的 VMware 環境。</p>
+                        <div class="flex justify-around text-center">
+                            <div>
+                                <p class="text-4xl font-bold text-[#06D6A0]">4</p>
+                                <p class="text-gray-500">Cores</p>
+                            </div>
+                            <div>
+                                <p class="text-4xl font-bold text-[#06D6A0]">8<span class="text-2xl">GB</span></p>
+                                <p class="text-gray-500">RAM</p>
+                            </div>
+                            <div>
+                                <p class="text-4xl font-bold text-[#06D6A0]">100<span class="text-2xl">GB</span></p>
+                                <p class="text-gray-500">Disk</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center">
+                        <h3 class="text-xl font-semibold mb-4 text-center text-[#073B4C]">安裝設定方式</h3>
+                        <div class="flex flex-col space-y-4 mb-4">
+                            <div class="border-l-4 border-[#FFD166] pl-4">
+                                <h4 class="font-bold">遠端設定 (建議)</h4>
+                                <p class="text-gray-600">由我們的專業團隊 (翁皓威、林碩人、許祐禎) 透過安全連線進行快速部署。</p>
+                            </div>
+                            <div class="border-l-4 border-[#FF6B6B] pl-4">
+                                <h4 class="font-bold">到場設定</h4>
+                                <p class="text-gray-600">針對金融業或有特殊資安規定的客戶，我們可安排工程師親自到場協助安裝。</p>
+                            </div>
+                        </div>
+                        <button id="openInstallationDetailsModal" class="mt-auto bg-[#118AB2] text-white px-6 py-2 rounded-lg hover:bg-[#073B4C] transition-colors duration-300 shadow-md">
+                            詳細說明
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-    <footer class="mt-12 text-center text-gray-500 text-sm">
-      &copy; 2025 DBSAFER Inc.
-    </footer>
-  </div>
+            <!-- Start of the new Phase 3 content -->
+            <section id="phase3">
+                <h2 class="text-3xl font-bold text-center text-[#118AB2] mb-8">第三階段：POC 執行與時程</h2>
+                <div class="main-layout">
+                    <!-- POC 流程綱要 -->
+                    <div class="process-container">
+                        <h2 class="process-title">POC 流程綱要</h2>
+                        
+                        <div class="process-step">
+                            <div class="step-number step-1">1</div>
+                            <div class="step-content">
+                                <div class="step-title">POC 啟動會議</div>
+                                <div class="step-description">確認專案目標與時程</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">▼</div>
+
+                        <div class="process-step">
+                            <div class="step-number step-2">2</div>
+                            <div class="step-content">
+                                <div class="step-title">DBSAFER 建置與設定</div>
+                                <div class="step-description">系統安裝與初始化設定</div>
+                                <div class="time-badge blue">2 週<br>建置期間</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">▼</div>
+
+                        <div class="process-step">
+                            <div class="step-number step-3">3</div>
+                            <div class="step-content">
+                                <div class="step-title">交付客戶進行 POC</div>
+                                <div class="step-description">正式開始客戶端測試驗證</div>
+                                <div class="time-badge green">2-4 週<br>測試期間</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">▼</div>
+
+                        <div class="process-step">
+                            <div class="step-number step-4">4</div>
+                            <div class="step-content">
+                                <div class="step-title">交付 POC 結案報告</div>
+                                <div class="step-description">報告完成的測試結果與專案總結</div>
+                                <div class="time-badge">POC 結案後兩週<br>報告交付</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 時程預估 -->
+                    <div class="schedule-container">
+                        <h2 class="schedule-title">時程預估(週)</h2>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-icon timeline-setup">1-2</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">建置與設定</div>
+                                <div class="timeline-duration">系統安裝與環境配置</div>
+                            </div>
+                            <div class="timeline-weeks">2 週</div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon timeline-testing">3-6</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">客戶測試時程</div>
+                                <div class="timeline-duration">POC 驗證與功能測試</div>
+                            </div>
+                            <div class="timeline-weeks">2-4 週</div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-icon timeline-report">7-8</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">POC測試報告</div>
+                                <div class="timeline-duration">結果分析與報告撰寫</div>
+                            </div>
+                            <div class="timeline-weeks">2 週</div>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; text-align: center;">
+                            <div style="font-weight: 600; color: #1E40AF; font-size: 1.1rem;">總計時程</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #3B82F6; margin-top: 5px;">6-8 週</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 甘特圖 -->
+                <div class="gantt-container">
+                    <h2 class="gantt-title">POC 項目時程甘特圖</h2>
+                    <div class="gantt-chart">
+                        <div class="time-header">
+                            <div class="week-label">第 1 週</div>
+                            <div class="week-label">第 2 週</div>
+                            <div class="week-label">第 3 週</div>
+                            <div class="week-label">第 4 週</div>
+                            <div class="week-label">第 5 週</div>
+                            <div class="week-label">第 6 週</div>
+                            <div class="week-label">第 7 週</div>
+                            <div class="week-label">第 8 週</div>
+                        </div>
+
+                        <div class="gantt-row">
+                            <div class="task-label">建置與設定</div>
+                            <div class="task-timeline">
+                                <div class="timeline-slot">
+                                    <div class="task-bar setup-bar">
+                                        <div class="task-bar-text">Week 1</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar setup-bar">
+                                        <div class="task-bar-text">Week 2</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                            </div>
+                        </div>
+
+                        <div class="gantt-row">
+                            <div class="task-label">客戶測試時程</div>
+                            <div class="task-timeline">
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar testing-bar">
+                                        <div class="task-bar-text">Week 3</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar testing-bar">
+                                        <div class="task-bar-text">Week 4</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar testing-bar">
+                                        <div class="task-bar-text">Week 5</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar testing-bar">
+                                        <div class="task-bar-text">Week 6</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                            </div>
+                        </div>
+
+                        <div class="gantt-row">
+                            <div class="task-label">POC測試報告</div>
+                            <div class="task-timeline">
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot"></div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar report-bar">
+                                        <div class="task-bar-text">Week 7</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-slot">
+                                    <div class="task-bar report-bar">
+                                        <div class="task-bar-text">Week 8</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End of the new Phase 3 content -->
+
+            <!-- New Note Section -->
+            <section id="note-section" class="text-center mt-16">
+                <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-[#FF6B6B] mx-auto max-w-2xl">
+                    <h3 class="text-xl font-semibold mb-4 text-[#073B4C]">備註</h3>
+                    <p class="text-gray-600 mb-4">
+                        若無照 SOP 流程走，業務需填寫：
+                        <a href="https://docs.google.com/document/d/1MHwgzMRxBcu2X1pREkl2DYkBrm-WBs-5/edit" class="inline-flex items-center gap-1 text-[#118AB2] hover:text-[#073B4C] font-medium" target="_blank">
+                            POC 異常時程申請與風險評估表
+                            <span class="download-link px-2 py-1 ml-2">下載檔案</span>
+                        </a>
+                    </p>
+                </div>
+            </section>
+            
+        </main>
+
+        <footer class="text-center mt-16 py-6 border-t border-gray-300">
+            <p class="text-gray-500">&copy; 2025 DBSAFER Inc. All Rights Reserved.</p>
+        </footer>
+
+    </div>
+
+    <!-- Details Modal for 文件準備 -->
+    <div id="detailsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-[#073B4C] mb-4">文件準備：詳細清單</h3>
+            
+            <div class="mb-6">
+                <div class="flex items-center mb-2">
+                    <h4 class="text-xl font-semibold text-[#118AB2]">1. 環境調查表</h4>
+                    <a href="https://docs.google.com/spreadsheets/d/16hJWjMM_9WZ69s_uRQGoPhdVmxYoc3kH/edit?rtpof=true" class="download-link ml-4" target="_blank">下載表單</a>
+                </div>
+                <p class="text-gray-700 space-y-1 leading-relaxed">
+                    請提供以下資訊，以利評估 POC 環境需求：
+                    <ul class="list-disc list-inside text-gray-700 space-y-1 ml-4 mt-2">
+                        <li>確定 POC 期間要進行測試的人員，並設定 DBSAFER 帳號進行控管。</li>
+                        <li>POC 期間要納管的資料庫 (DB) 進行設定，以及哪些帳號有權限訪問納管的 DB，並針對某欄位去限制 SQL 查詢或遮罩設定。</li>
+                        <li>POC 期間要納管的作業系統 (OS) 或終端機 (Terminal)，以及哪些帳號有權限訪問納管的 Terminal，並針對要管控的指令進行設定。</li>
+                    </ul>
+                </p>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex items-center mb-2">
+                    <h4 class="text-xl font-semibold text-[#118AB2]">2. 建議測試功能 Check List</h4>
+                    <a href="https://docs.google.com/spreadsheets/d/1lvw91IbfkwARAEnd4qKAZ3pdqGfy67by/edit?rtpof=true" class="download-link ml-4" target="_blank">下載清單</a>
+                </div>
+                <p class="text-gray-700 space-y-1 leading-relaxed">
+                    請確認 POC 期間預計測試的功能項目：
+                    <ul class="list-disc list-inside text-gray-700 space-y-1 ml-4 mt-2">
+                        <li>帳號管理的測試內容。</li>
+                        <li>資料庫存取權限的測試內容。</li>
+                        <li>控制伺服器存取權限的測試內容。</li>
+                        <li>日誌管理、報表功能、審核系統以及側錄功能的運用。</li>
+                    </ul>
+                </p>
+            </div>
+
+            <div>
+                <div class="flex items-center mb-2">
+                    <h4 class="text-xl font-semibold text-[#118AB2]">3. 防火牆規則表說明</h4>
+                    <a href="https://docs.google.com/spreadsheets/d/1-_mtXXafVzxKK_s97Ze9taTX32aJEnHd/edit?gid=5223115#gid=5223115" class="download-link ml-4" target="_blank">下載說明</a>
+                </div>
+                <p class="text-gray-700 space-y-1 leading-relaxed">
+                    詳細列出 DBSAFER 部署所需的防火牆規則與連接埠設定。
+                </p>
+            </div>
+
+            <button id="closeDetailsModal" class="absolute top-4 right-4 bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-300">
+                &times;
+            </button>
+        </div>
+    </div>
+
+    <!-- Details Modal for 業務洽談與簡報 -->
+    <div id="presentationModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-[#073B4C] mb-4">業務洽談與簡報：簡報清單</h3>
+            
+            <div class="mb-6">
+                <h4 class="text-xl font-semibold mb-2 text-[#118AB2]">1. DBSAFER 產品介紹簡報</h4>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li>DBSAFER 產品優勢及產品架構</li>
+                    <li>DBSAFER 模組功能及計價方式</li>
+                    <li>DBSAFER 合規性分析</li>
+                    <li>DBSAFER 競品比較</li>
+                </ul>
+                <div class="mt-4 flex flex-wrap gap-4 justify-center">
+                    <a href="https://drive.google.com/drive/folders/12323ugYqCgNORfYJibCA6RjtAxur7lP1" class="document-download-button" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                        <span>簡報</span>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1gfFVps5plttuIBWRYLOMX_4YsYkvkJSG" class="document-download-button" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>案例</span>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1YZWj1fMetLBYKjVkq9hNzaFuvFD6hmh4" class="document-download-button" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        <span>DM</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="text-xl font-semibold mb-2 text-[#118AB2]">2. 解決方案概述白皮書</h4>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li>針對不同產業的資安議題分析</li>
+                    <li>針對不同產業 DBSAFER 可提供的合規性</li>
+                    <li>針對不同產業 DBSAFER 的資安防護方式</li>
+                    <li>未來建置藍圖分享</li>
+                </ul>
+                <a href="https://dbsafer.com/ebook" class="download-link mt-2" target="_blank">下載檔案 (PDF)</a>
+            </div>
+
+            <button id="closePresentationModal" class="absolute top-4 right-4 bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-300">
+                &times;
+            </button>
+        </div>
+    </div>
+
+    <!-- New Modal for 安裝設定方式 詳細說明 -->
+    <div id="installationDetailsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-[#073B4C] mb-6 text-center">DBSAFER 測試前置準備事項及流程</h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-xl font-semibold text-[#118AB2] mb-2">1. 客戶填寫及參閱說明</h4>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                        <li>環境調查表</li>
+                        <li>功能Check List</li>
+                        <li>防火牆規則表說明</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-semibold text-[#118AB2] mb-2">2. 白名單設定</h4>
+                    <p class="text-gray-700 leading-relaxed">請客戶將智雲對外 IP：<span class="font-mono bg-gray-100 px-1 rounded text-red-600">60.250.145.142</span> 加入白名單，以便工程師後續遠端連線進行設定。</p>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-semibold text-[#118AB2] mb-2">3. 環境提供</h4>
+                    <p class="text-gray-700 mb-2 leading-relaxed">請提供以下三個環境：</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                        <li>
+                            <span class="font-bold">Client 端</span>：Windows 作業系統環境／Win10 以上版本
+                            <p class="text-gray-600 text-sm ml-4 mt-1">(可用另開 VM 的方式或者提供跳板機)</p>
+                        </li>
+                        <li>
+                            <span class="font-bold">DBSAFER Server VM規格</span>：CPU:4core／ RAM:8G ／100G硬碟
+                            <div class="text-gray-600 text-sm ml-4 mt-1">
+                                <p>地端VM：智雲工程師到現場上傳OVF檔</p>
+                                <p class="ml-6">(僅需確認server資源足夠，不需先建立VM，OVF已含作業系統RockyLinux 8.10)</p>
+                            </div>
+                            <div class="text-gray-600 text-sm ml-4 mt-1">
+                                <p>雲端VM：開機器時請選擇作業系統RockyLinux 8.10</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="font-bold">Target Server</span>：提供要由DBSAFER納管的測試環境OS或者DB。
+                            <p class="text-gray-600 text-sm ml-4 mt-1">(OS：Linux／Windows Server 2008（含）以上的版本；DB：SQL/ NoSQL)</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xl font-semibold text-[#118AB2] mb-2">4. 網路設定</h4>
+                    <p class="text-gray-700 leading-relaxed">請提供 DBSAFER server 的網路設定：<span class="font-mono bg-gray-100 px-1 rounded text-red-600">IP</span>、<span class="font-mono bg-gray-100 px-1 rounded text-red-600">NETMASK</span>、<span class="font-mono bg-gray-100 px-1 rounded text-red-600">GATEWAY</span>。</p>
+                </div>
+            </div>
+
+            <button id="closeInstallationDetailsModal" class="absolute top-4 right-4 bg-gray-200 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-300">
+                &times;
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Original tooltipTitleCallback for Chart.js (if needed elsewhere)
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        // Modal functionality for 文件準備
+        const openDetailsModalBtn = document.getElementById('openDetailsModal');
+        const closeDetailsModalBtn = document.getElementById('closeDetailsModal');
+        const detailsModal = document.getElementById('detailsModal');
+
+        openDetailsModalBtn.addEventListener('click', () => {
+            detailsModal.classList.add('show');
+        });
+
+        closeDetailsModalBtn.addEventListener('click', () => {
+            detailsModal.classList.remove('show');
+        });
+
+        detailsModal.addEventListener('click', (event) => {
+            if (event.target === detailsModal) {
+                detailsModal.classList.remove('show');
+            }
+        });
+
+        // Modal functionality for 業務洽談與簡報
+        const openPresentationModalBtn = document.getElementById('openPresentationModal');
+        const closePresentationModalBtn = document.getElementById('closePresentationModal');
+        const presentationModal = document.getElementById('presentationModal');
+
+        openPresentationModalBtn.addEventListener('click', () => {
+            presentationModal.classList.add('show');
+        });
+
+        closePresentationModalBtn.addEventListener('click', () => {
+            presentationModal.classList.remove('show');
+        });
+
+        presentationModal.addEventListener('click', (event) => {
+            if (event.target === presentationModal) {
+                presentationModal.classList.remove('show');
+            }
+        });
+
+        // Modal functionality for 安裝設定方式 詳細說明
+        const openInstallationDetailsModalBtn = document.getElementById('openInstallationDetailsModal');
+        const closeInstallationDetailsModalBtn = document.getElementById('closeInstallationDetailsModal');
+        const installationDetailsModal = document.getElementById('installationDetailsModal');
+
+        openInstallationDetailsModalBtn.addEventListener('click', () => {
+            installationDetailsModal.classList.add('show');
+        });
+
+        closeInstallationDetailsModalBtn.addEventListener('click', () => {
+            installationDetailsModal.classList.remove('show');
+        });
+
+        installationDetailsModal.addEventListener('click', (event) => {
+            if (event.target === installationDetailsModal) {
+                installationDetailsModal.classList.remove('show');
+            }
+        });
+
+        // New JavaScript for Phase 3 animations and interactions
+        window.addEventListener('load', function() {
+            const taskBars = document.querySelectorAll('.task-bar');
+            
+            taskBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.transform = 'scaleX(0)';
+                    bar.style.transformOrigin = 'left';
+                    bar.style.transition = 'transform 1s ease-out';
+                    
+                    setTimeout(() => {
+                        bar.style.transform = 'scaleX(1)';
+                    }, 50);
+                }, index * 200);
+            });
+
+            // POC 流程步驟動畫
+            const processSteps = document.querySelectorAll('.process-step');
+            processSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.style.opacity = '0';
+                    step.style.transform = 'translateY(20px)';
+                    step.style.transition = 'all 0.6s ease-out';
+                    
+                    setTimeout(() => {
+                        step.style.opacity = '1';
+                        step.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 150);
+            });
+        });
+
+        // Add hover interaction effects for Gantt rows
+        document.querySelectorAll('.gantt-row').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.querySelectorAll('.task-bar').forEach(bar => {
+                    bar.style.filter = 'brightness(1.1)';
+                });
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.querySelectorAll('.task-bar').forEach(bar => {
+                    bar.style.filter = 'brightness(1)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+
