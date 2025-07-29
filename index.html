@@ -1,4 +1,74 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<!-- 此處省略，實際應放入用戶提供的完整 HTML 內容 -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBSAFER POC SOP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="bg-blue-800 text-white p-6 rounded-lg shadow mb-10 text-center">
+      <h1 class="text-4xl font-bold">DBSAFER POC SOP</h1>
+      <p class="text-sm text-blue-200">資料庫安全概念驗證流程儀表板</p>
+    </header>
+
+    <!-- 第一階段 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-blue-600 mb-6">第一階段：探索與準備</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold text-blue-800 mb-2">🤝 業務簡報</h3>
+          <p class="text-gray-700">介紹 DBSAFER 功能與模組架構</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold text-blue-800 mb-2">🔍 架構訪談</h3>
+          <p class="text-gray-700">確認現有 PAM/DAM 系統與需求</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="text-lg font-semibold text-blue-800 mb-2">📋 文件準備</h3>
+          <p class="text-gray-700">協助填寫環境調查表與測試清單</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第二階段 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-blue-600 mb-6">第二階段：建置與測試</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-semibold text-blue-800 mb-2">VM 規格建議</h3>
+          <ul class="list-disc list-inside text-gray-700">
+            <li>CPU：4 核心</li>
+            <li>記憶體：8 GB</li>
+            <li>硬碟：100 GB</li>
+          </ul>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-semibold text-blue-800 mb-2">安裝方式</h3>
+          <p class="text-gray-700">可選擇遠端設定或現場建置，依據資安需求安排</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第三階段 -->
+    <section>
+      <h2 class="text-2xl font-bold text-blue-600 mb-6">第三階段：POC 時程與執行</h2>
+      <div class="bg-white p-6 rounded shadow">
+        <ol class="list-decimal list-inside text-gray-800 space-y-2">
+          <li>POC 啟動會議（明確目標與時程）</li>
+          <li>DBSAFER 安裝與設定（約 2 週）</li>
+          <li>POC 測試期（約 2～4 週）</li>
+          <li>結案報告提交（POC 結束後 2 週）</li>
+        </ol>
+        <p class="mt-4 text-green-600 font-semibold">總時程：6～8 週</p>
+      </div>
+    </section>
+
+    <footer class="mt-12 text-center text-gray-500 text-sm">
+      &copy; 2025 DBSAFER Inc.
+    </footer>
+  </div>
+</body>
 </html>
